@@ -14,26 +14,23 @@
   // install the node dependencies for this project
   function install (context) {
     // set properties
-    var q = context.requireCordovaModule('q');
-    var async = new q.defer(); // eslint-disable-line
-    var installFlagLocation = path.join(context.opts.projectRoot, 'plugins', context.opts.plugin.id, INSTALLFLAGNAME);
-    var dependencies = require(path.join(context.opts.projectRoot, 'plugins', context.opts.plugin.id, 'package.json')).dependencies;
+	var installFlagLocation = path.join(context.opts.projectRoot, 'plugins', context.opts.plugin.id, INSTALLFLAGNAME);
+	var dependencies = require(path.join(context.opts.projectRoot, 'plugins', context.opts.plugin.id, 'package.json')).dependencies;
 
-    // only run once
-    if (getPackageInstalled(installFlagLocation)) return;
+	// only run once
+	if (getPackageInstalled(installFlagLocation)) return;
 
-    // install node modules
-    var modules = getNodeModulesToInstall(dependencies);
-    if (modules.length === 0) return async.promise;
+	// install node modules
+	var modules = getNodeModulesToInstall(dependencies);
+	if (modules.length === 0) return Promise.resolve();
 
-    installNodeModules(modules, context.opts.plugin.id, function () {
-      // only run once
-      setPackageInstalled(installFlagLocation);
-      async.resolve();
-    });
-
-    // wait until callbacks from the all the npm install complete
-    return async.promise;
+	return new Promise(function(resolve) {
+		installNodeModules(modules, context.opts.plugin.id, function () {
+			// only run once
+			setPackageInstalled(installFlagLocation);
+			resolve();
+		});
+	})
   }
 
   // installs the node modules via npm install one at a time
