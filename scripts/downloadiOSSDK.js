@@ -3,17 +3,10 @@
 
 module.exports = function (context) {
 	var _exec = require('./exec/exec.js')
-	function exec(cmd) {
-		return new Promise(function(resolve, reject) {
-			_exec(cmd, function(err, out, code) {
-				if(err) reject({err, code})
-				else resolve({out, code})
-			})
-		})
-	}
+	function exec(cmd) {return new Promise(function(resolve) {_exec(cmd, resolve)})}
 
-  var IosSDKVersion = "OpenTok-iOS-2.15.3";
-  var downloadFile = require('./downloadFile.js')
+	var IosSDKVersion = "OpenTok-iOS-2.15.3";
+	var downloadFile = require('./downloadFile.js')
 
 	return new Promise(function(resolve, reject) {
 		var tarUrl = 'https://s3.amazonaws.com/artifact.tokbox.com/rel/ios-sdk/' + IosSDKVersion + '.tar.bz2'
@@ -22,10 +15,10 @@ module.exports = function (context) {
 		downloadFile(tarUrl, tarFileName, function(err) {
 			if(err) return reject(err)
 			console.log('downloaded');
+			var frameworkDir = context.opts.plugin.dir + '/src/ios/';
 			exec('tar -zxvf ./' + IosSDKVersion + '.tar.bz2')
 			.then(function() {
 				console.log('expanded');
-				var frameworkDir = context.opts.plugin.dir + '/src/ios/';
 				return exec('mv ./' + IosSDKVersion + '/OpenTok.framework ' + frameworkDir)
 			})
 			.then(function() {
