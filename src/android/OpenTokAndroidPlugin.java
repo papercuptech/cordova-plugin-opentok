@@ -234,6 +234,7 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
             if (cameraName.equals("back")) {
                 mPublisher.cycleCamera();
             }
+            cordova.getActivity().runOnUiThread(this);
         }
 
         public void setPropertyFromArray(JSONArray args) {
@@ -242,12 +243,12 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
 
         public void startPublishing() {
             mSession.publish(mPublisher);
-            cordova.getActivity().runOnUiThread(this);
+		        //cordova.getActivity().runOnUiThread(this);
         }
 
         public void stopPublishing() {
-            ViewGroup parent = (ViewGroup) webView.getView().getParent();
-            parent.removeView(this.mView);
+            //ViewGroup parent = (ViewGroup) webView.getView().getParent();
+            //parent.removeView(this.mView);
             if(this.mPublisher != null){
                 try {
                     mSession.unpublish(this.mPublisher);
@@ -295,7 +296,7 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
         public void onStreamCreated(PublisherKit arg0, Stream arg1) {
             Log.i(TAG, "publisher stream received");
             streamCollection.put(arg1.getStreamId(), arg1);
-            
+
             streamHasAudio.put(arg1.getStreamId(), arg1.hasAudio());
             streamHasVideo.put(arg1.getStreamId(), arg1.hasVideo());
             JSONObject videoDimensions = new JSONObject();
@@ -906,7 +907,7 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
     @Override
     public void onStreamVideoDimensionsChanged(Session session, Stream stream, int width, int height) {
         JSONObject oldValue = this.streamVideoDimensions.get(stream.getStreamId());
-        
+
         JSONObject newValue = new JSONObject();
         try {
             newValue.put("width", width);
@@ -993,7 +994,7 @@ public class OpenTokAndroidPlugin extends CordovaPlugin
                     params.put("session_id", sessionId);
                     if (connectionId != null) {
                         params.put("action", "cp_on_connect");
-                        params.put("connectionId", connectionId);                
+                        params.put("connectionId", connectionId);
                     } else {
                         params.put("action", "cp_initialize");
                     }

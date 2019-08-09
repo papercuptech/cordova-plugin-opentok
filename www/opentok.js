@@ -415,13 +415,30 @@ TBPublisher = (function() {
   };
 
   TBPublisher.prototype.removePublisherElement = function() {
-    this.pubElement.parentNode.removeChild(this.pubElement);
+    var element;
+    element = streamElements[PublisherStreamId];
+    if (element) {
+      this.session.resetElement(element);
+      delete streamElements[PublisherStreamId];
+    }
     return this.pubElement = false;
   };
 
   TBPublisher.prototype.destroy = function() {
+    var element;
     if (this.pubElement) {
-      return Cordova.exec(this.removePublisherElement, TBError, OTPlugin, "destroyPublisher", []);
+      if (this.session) {
+        this.session.unpublish(this);
+      }
+      element = streamElements[PublisherStreamId];
+      if (element) {
+        this.session.resetElement(element);
+        delete streamElements[PublisherStreamId];
+      }
+      this.pubElement = false;
+      this.session = false;
+      Cordova.exec(TBSuccess, TBError, OTPlugin, "destroyPublisher", []);
+      return TBUpdateObjects();
     }
   };
 
@@ -673,19 +690,16 @@ TBSession = (function() {
   };
 
   TBSession.prototype.unpublish = function() {
-    var element;
+    if (!this.alreadyPublishing) {
+      return;
+    }
     this.alreadyPublishing = false;
     console.log("JS: Unpublish");
-    element = this.publisher.pubElement;
-    if (element) {
-      this.resetElement(element);
-      TBUpdateObjects();
-    }
     return Cordova.exec(TBSuccess, TBError, OTPlugin, "unpublish", []);
   };
 
   TBSession.prototype.unsubscribe = function(subscriber) {
-    var element, elementId;
+    var element, elementId, rv;
     console.log("JS: Unsubscribe");
     elementId = subscriber.streamId;
     element = document.getElementById("TBStreamConnection" + elementId);
@@ -694,9 +708,10 @@ TBSession = (function() {
     if (element) {
       this.resetElement(element);
       delete streamElements[elementId];
-      TBUpdateObjects();
     }
-    return Cordova.exec(TBSuccess, TBError, OTPlugin, "unsubscribe", [subscriber.streamId]);
+    rv = Cordova.exec(TBSuccess, TBError, OTPlugin, "unsubscribe", [subscriber.streamId]);
+    TBUpdateObjects();
+    return rv;
   };
 
   function TBSession(apiKey, sessionId) {
