@@ -161,12 +161,12 @@ TBEvent = (function() {
 
 })();
 
-var OTPublisherError, OTReplacePublisher, TBError, TBGenerateDomHelper, TBGetScreenRatios, TBGetZIndex, TBSuccess, TBUpdateObjects, getPosition, pdebug, replaceWithVideoStream, streamElements;
+var OTPublisherError, OTReplacePublisher, TBError, TBGenerateDomHelper, TBGetScreenRatios, TBGetZIndex, TBSuccess, TBUpdateObjects, getPosition, isString, pdebug, replaceWithVideoStream, streamElements;
 
 streamElements = {};
 
 getPosition = function(pubDiv) {
-  var computedStyle, curleft, curtop, height, width;
+  var computedStyle, curleft, curtop, height, parent, position, width;
   if (!pubDiv) {
     return {};
   }
@@ -175,16 +175,23 @@ getPosition = function(pubDiv) {
   height = pubDiv.offsetHeight;
   curtop = pubDiv.offsetTop;
   curleft = pubDiv.offsetLeft;
-  while ((pubDiv = pubDiv.offsetParent)) {
-    curleft += pubDiv.offsetLeft;
-    curtop += pubDiv.offsetTop;
+  parent = pubDiv;
+  while ((parent = parent.offsetParent)) {
+    curleft += parent.offsetLeft;
+    curtop += parent.offsetTop;
   }
-  return {
+  position = {
     top: curtop,
     left: curleft,
     width: width,
     height: height
   };
+  console.log('OT getPosition() ', pubDiv.getAttribute("id"), pubDiv.getAttribute("class"), position);
+  return position;
+};
+
+isString = function(val) {
+  return Object.prototype.toString.call(val) === "[object String]";
 };
 
 replaceWithVideoStream = function(element, streamId, properties) {
@@ -198,8 +205,8 @@ replaceWithVideoStream = function(element, streamId, properties) {
   newElement.setAttribute("class", "OT_root " + typeClass);
   newElement.setAttribute("data-streamid", streamId);
   newElement.setAttribute("data-insertMode", properties.insertMode);
-  newElement.style.width = properties.width + "px";
-  newElement.style.height = properties.height + "px";
+  newElement.style.width = isString(properties.width) ? properties.width : properties.width + "px";
+  newElement.style.height = isString(properties.height) ? properties.width : properties.height + "px";
   newElement.style.overflow = "hidden";
   newElement.style['background-color'] = "#000000";
   streamElements[streamId] = newElement;

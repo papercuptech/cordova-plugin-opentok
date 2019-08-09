@@ -9,6 +9,35 @@
     <license>Apache 2.0</license>
     <keywords>opentok,tokbox</keywords>
 
+    <platform name="android">
+      <framework src="build-extras.gradle" custom="true" type="gradleReference" />
+      <framework src="com.android.support:appcompat-v7:23.1.0" />
+	    <framework src="com.android.support:design:27+" />
+      <framework src="com.android.volley:volley:1.1.0" />
+      <asset src="www/opentok.js" target="opentok.js" />
+  	  <source-file src="src/android/OpenTokAndroidPlugin.java" target-dir="src/com/tokbox/cordova/" />
+      <source-file src="src/android/OpenTokCustomVideoRenderer.java" target-dir="src/com/tokbox/cordova/" />
+      <config-file target="AndroidManifest.xml" parent="/manifest">
+        <uses-permission android:name="android.permission.CAMERA" />
+        <uses-permission android:name="android.permission.INTERNET" />
+        <uses-permission android:name="android.permission.RECORD_AUDIO" />
+        <uses-permission android:name="android.permission.WAKE_LOCK" />
+        <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+        <uses-feature android:name="android.hardware.camera" android:required="true" />
+        <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+      </config-file>
+
+      <!-- copy opentok sdk -->
+
+      <config-file target="config.xml" parent="/*">
+        <feature name="OpenTokPlugin">
+          <param name="android-package" value="com.tokbox.cordova.OpenTokAndroidPlugin"/>
+          <param name="onload" value="true" />
+        </feature>
+      </config-file>
+
+    </platform>
+
     <!-- ios -->
     <platform name="ios">
       <hook type="before_plugin_install" src="scripts/downloadiOSSDK.js" />
@@ -60,11 +89,6 @@
         </feature>
       </config-file>
 
-    </platform>
-
-    <platform name="android">
-      <hook type="before_plugin_install" src="scripts/downloadJSSDK.js" />
-      <asset src="node_modules/@opentok/client/dist/js/opentok.min.js" target="opentok.js"/>
     </platform>
 
     <platform name="browser">

@@ -15,15 +15,22 @@ getPosition = (pubDiv) ->
   height = pubDiv.offsetHeight
   curtop = pubDiv.offsetTop
   curleft = pubDiv.offsetLeft
-  while(pubDiv = pubDiv.offsetParent)
-    curleft += pubDiv.offsetLeft
-    curtop += pubDiv.offsetTop
-  return {
+  parent = pubDiv
+  while(parent = parent.offsetParent)
+    curleft += parent.offsetLeft
+    curtop += parent.offsetTop
+  position = {
     top:curtop
     left:curleft
     width:width
     height:height
   }
+  console.log('OT getPosition() ', pubDiv.getAttribute("id"), pubDiv.getAttribute("class"), position)
+  return position
+
+
+isString = (val) ->
+  Object.prototype.toString.call(val) == "[object String]"
 
 replaceWithVideoStream = (element, streamId, properties) ->
   typeClass = if streamId == PublisherStreamId then PublisherTypeClass else SubscriberTypeClass
@@ -34,8 +41,8 @@ replaceWithVideoStream = (element, streamId, properties) ->
   newElement.setAttribute( "class", "OT_root #{typeClass}" )
   newElement.setAttribute( "data-streamid", streamId )
   newElement.setAttribute( "data-insertMode", properties.insertMode )
-  newElement.style.width = properties.width+"px"
-  newElement.style.height = properties.height+"px"
+  newElement.style.width = if isString(properties.width) then properties.width else properties.width + "px"
+  newElement.style.height = if isString(properties.height) then properties.height else properties.height + "px"
   newElement.style.overflow = "hidden"
   newElement.style['background-color'] = "#000000"
   streamElements[ streamId ] = newElement
