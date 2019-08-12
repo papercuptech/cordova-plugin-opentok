@@ -161,7 +161,7 @@ TBEvent = (function() {
 
 })();
 
-var OTPublisherError, OTReplacePublisher, TBError, TBGenerateDomHelper, TBGetScreenRatios, TBGetZIndex, TBSuccess, TBUpdateObjects, getPosition, isString, pdebug, replaceWithVideoStream, streamElements;
+var OTPublisherError, OTReplacePublisher, TBError, TBGenerateDomHelper, TBGetScreenRatios, TBGetZIndex, TBSuccess, TBUpdateObjects, getPosition, pdebug, replaceWithVideoStream, streamElements;
 
 streamElements = {};
 
@@ -186,12 +186,7 @@ getPosition = function(pubDiv) {
     width: width,
     height: height
   };
-  console.log('OT getPosition() ', pubDiv.getAttribute("id"), pubDiv.getAttribute("class"), position);
   return position;
-};
-
-isString = function(val) {
-  return Object.prototype.toString.call(val) === "[object String]";
 };
 
 replaceWithVideoStream = function(element, streamId, properties) {
@@ -199,15 +194,16 @@ replaceWithVideoStream = function(element, streamId, properties) {
   typeClass = streamId === PublisherStreamId ? PublisherTypeClass : SubscriberTypeClass;
   if (properties.insertMode === "replace") {
     newElement = element;
+    newElement.style.width = properties.width + "px";
+    newElement.style.height = properties.height + "px";
   } else {
     newElement = document.createElement("div");
+    newElement.style.width = '100%';
+    newElement.style.height = '100%';
   }
   newElement.setAttribute("class", "OT_root " + typeClass);
   newElement.setAttribute("data-streamid", streamId);
   newElement.setAttribute("data-insertMode", properties.insertMode);
-  console.log('replaceWithVideoStream ', streamId, properties);
-  newElement.style.width = isString(properties.width) ? properties.width : properties.width + "px";
-  newElement.style.height = isString(properties.height) ? properties.height : properties.height + "px";
   newElement.style.overflow = "hidden";
   newElement.style['background-color'] = "#000000";
   streamElements[streamId] = newElement;
