@@ -5,3 +5,6 @@
 node_modules
 src/ios/OpenTok.framework
 .gradle
+/gradlew
+/gradlew.bat
+/package-lock.json
