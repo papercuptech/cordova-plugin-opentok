@@ -25,24 +25,23 @@ getPosition = (pubDiv) ->
     width:width
     height:height
   }
-  console.log('OT getPosition() ', pubDiv.getAttribute("id"), pubDiv.getAttribute("class"), position)
   return position
 
-
-isString = (val) ->
-  Object.prototype.toString.call(val) == "[object String]"
 
 replaceWithVideoStream = (element, streamId, properties) ->
   typeClass = if streamId == PublisherStreamId then PublisherTypeClass else SubscriberTypeClass
   if (properties.insertMode == "replace")
     newElement = element
+    newElement.style.width = properties.width + "px"
+    newElement.style.height = properties.height + "px"
   else
     newElement = document.createElement( "div" )
+    newElement.style.width = '100%'
+    newElement.style.height = '100%'
+
   newElement.setAttribute( "class", "OT_root #{typeClass}" )
   newElement.setAttribute( "data-streamid", streamId )
   newElement.setAttribute( "data-insertMode", properties.insertMode )
-  newElement.style.width = if isString(properties.width) then properties.width else properties.width + "px"
-  newElement.style.height = if isString(properties.height) then properties.height else properties.height + "px"
   newElement.style.overflow = "hidden"
   newElement.style['background-color'] = "#000000"
   streamElements[ streamId ] = newElement

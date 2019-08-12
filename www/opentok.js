@@ -205,8 +205,9 @@ replaceWithVideoStream = function(element, streamId, properties) {
   newElement.setAttribute("class", "OT_root " + typeClass);
   newElement.setAttribute("data-streamid", streamId);
   newElement.setAttribute("data-insertMode", properties.insertMode);
+  console.log('replaceWithVideoStream ', streamId, properties);
   newElement.style.width = isString(properties.width) ? properties.width : properties.width + "px";
-  newElement.style.height = isString(properties.height) ? properties.width : properties.height + "px";
+  newElement.style.height = isString(properties.height) ? properties.height : properties.height + "px";
   newElement.style.overflow = "hidden";
   newElement.style['background-color'] = "#000000";
   streamElements[streamId] = newElement;

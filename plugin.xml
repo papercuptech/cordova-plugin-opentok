@@ -64,6 +64,9 @@
 
     <platform name="android">
       <hook type="before_plugin_install" src="scripts/downloadJSSDK.js" />
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.CAMERA" />
+        </config-file>
       <asset src="node_modules/@opentok/client/dist/js/opentok.min.js" target="opentok.js"/>
     </platform>
 

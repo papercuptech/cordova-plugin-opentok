@@ -174,10 +174,12 @@
     [_publisher setPublishVideo:bpubVideo];
     [_publisher setAudioFallbackEnabled:baudioFallbackEnabled];
     [self.webView.scrollView addSubview:_publisher.view];
-    [_publisher.view setFrame:CGRectMake(left, top, width, height)];
+    [_publisher.view setFrame:CGRectMake(left, top, width < 1 ? 1 : width, height < 1 ? 1 : height)];
 
     // Set depth location of camera view based on CSS z-index.
     _publisher.view.layer.zPosition = zIndex;
+
+    _publisher.view.userInteractionEnabled = false;
 
     if ([cameraPosition isEqualToString:@"back"]) {
         _publisher.cameraPosition = AVCaptureDevicePositionBack;
@@ -198,7 +200,7 @@
     int zIndex = [[command.arguments objectAtIndex:5] intValue];
     if ([sid isEqualToString:@"TBPublisher"]) {
         NSLog(@"The Width is: %d", width);
-        _publisher.view.frame = CGRectMake(left, top, width, height);
+        _publisher.view.frame = CGRectMake(left, top, width < 1 ? 1 : width, height < 1 ? 1 : height);
 
         // Set depth location of camera view based on CSS z-index.
         _publisher.view.layer.zPosition = zIndex;
@@ -215,7 +217,7 @@
 
     if (streamInfo) {
         // Reposition the video feeds!
-        streamInfo.view.frame = CGRectMake(left, top, width, height);
+        streamInfo.view.frame = CGRectMake(left, top, width < 1 ? 1 : width, height < 1 ? 1 : height);
 
         // Set depth location of camera view based on CSS z-index.
         streamInfo.view.layer.zPosition = zIndex;
@@ -240,7 +242,7 @@
     NSString *encodedString = [imageData base64EncodedStringWithOptions:0 ];
     return [NSString stringWithFormat:@"data:image/png;base64,%@",encodedString];
 }
-    
+
 
 #pragma mark Publisher Methods
 - (void)publishAudio:(CDVInvokedUrlCommand*)command{
@@ -289,7 +291,7 @@
     NSString* sid = [command.arguments objectAtIndex:0];
     NSString *snapshot;
     OTSubscriber * subscriber;
-    
+
     if ([sid isEqualToString:@"TBPublisher"]) {
         if (_publisher.view) {
             snapshot = [self getBase64PNGFromUIView: _publisher.view];
@@ -300,7 +302,7 @@
             snapshot = [self getBase64PNGFromUIView: subscriber.view];
         }
     }
-    
+
     CDVPluginResult* callbackResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                                         messageAsString: snapshot];
     [callbackResult setKeepCallbackAsBool:YES];
@@ -413,10 +415,12 @@
     }
     [subscriberDictionary setObject:sub forKey:myStream.streamId];
 
-    [sub.view setFrame:CGRectMake(left, top, width, height)];
+    [sub.view setFrame:CGRectMake(left, top, width < 1 ? 1 : width, height < 1 ? 1 : height)];
 
     // Set depth location of camera view based on CSS z-index.
     sub.view.layer.zPosition = zIndex;
+
+    sub.view.userInteractionEnabled = false;
 
     [self.webView.scrollView addSubview:sub.view];
 
